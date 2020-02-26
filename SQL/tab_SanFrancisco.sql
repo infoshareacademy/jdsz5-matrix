@@ -25,7 +25,7 @@ CREATE TABLE status_sf(
 insert into status_sf --tabela ograniczona do San Francisco
 select station_id, bikes_available, docks_available, to_timestamp(time, 'YYYY/MM/DD HH24:MI') as status_time --sekundy nie mają zanczenia, więc je pominełam
 from status join station_sf on status.station_id = station_sf.id --join z tabelą station2 zapewnia, że dane w tabeli status2 ogranicznmya tylko do San Francisco
-select * from status_sf;
+--select * from status_sf;
 
 CREATE TABLE status_sf_h(
 	station_id int4,
@@ -122,3 +122,5 @@ FROM weather w
 where zip_code in (select distinct zip_code from trip_sf);
 --select * from weather_sf;
 
+--- od razu polecenie do usunięcia wypożyczeń powyżej 12h
+delete from trip_sf where duration > 12 * 60 * 60;
