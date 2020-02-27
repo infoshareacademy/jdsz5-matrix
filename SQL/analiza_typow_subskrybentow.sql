@@ -3,7 +3,7 @@
 --2. Szczyt wypożyczeń dla subskrybentów to godziny 8 i 17, a dla wypożyczeń jednorazowych największa aktywność odbywa się między 11 a 17, czyli w standardowych godzinach pracy
 --3. Użytkownicy abonamentowi najczęciej wypożyczają rowery od poniedziałku do piątku, przy czym piątek jest zdecydowanie słabszy od pozostaych dni roboczych, 
 --   natomiast dla wypożyczeń jednorazowych największa koncentracja jest od piątku do niedzieli
---4. U użytkowników abonamentowych wypożyczenia poniżej 20 minut to 98% wypożyczeń, dla użytkowników jednorazowych 20 minutowe przejazdy to tylko 26% wypożyczeń
+--4. U użytkowników abonamentowych wypożyczenia poniżej 20 minut to 98% wypożyczeń, dla użytkowników jednorazowych 20 minutowe przejazdy to tylko 56% wypożyczeń
 --5. Wahania sezonowe są większe dla okazjonalnych wypożyczeń niż dla abonamentów, początek i koniec roku są zdecydowanie słabsze niż w okresie wiosny i lata (miesiące 5-8)
 --6. 13% osób wypożyczjących rowery okazjonalnie rozpoczynają i kończą podróż w tym samym miejscu, wśród aboamentów to tylko 1% przejazdów
 --7. Wnioskując z powyższych podpunktów - abonamenci wykorzystują rowery przede wszystkim na dojazdy do pracy, a użytkownicy jednorazowi na aktywności turystyczne
@@ -176,7 +176,8 @@ group by subscription_type
 
 --Do sprawdzenia czy w pobliżu miejsc, gdzie wypożyczenia i odddania rowerów odbywają się na tej same stacji, są blisko punktów komunikacyjnych?
 --Ranking stacji dokujących wg procentu oddawania na tej samej tacji
-select s.id as id_stacji, name, lat, long, count(case when start_station_id=end_station_id then t.id end)/count(t.id)::numeric as zgodnosc_stacji
+select s.id as id_stacji, name, lat, long, count(case when start_station_id=end_station_id then t.id end) as ilosc_wypo,
+       count(case when start_station_id=end_station_id then t.id end)/count(t.id)::numeric as zgodnosc_stacji
 from trip_sf t join station_sf s on t.start_station_id=s.id 
 where subscription_type = 'Customer'
 group by s.id, name, lat, long, dock_count
