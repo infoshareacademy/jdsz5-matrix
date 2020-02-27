@@ -1,4 +1,4 @@
---zaptania tworzące nowe tabele z poprawnymi formatami, dodające klucze obce
+--zaptania tworzące nowe tabele z poprawnymi formatami, dodające klucze obce i ograniczające dane do miasta San Francisco
 
 CREATE TABLE station_sf (
 	id int4 primary key,
