@@ -52,7 +52,7 @@ CREATE TABLE trip_sf (
 	end_station_id int4,
 	bike_id int4 not NULL,
 	subscription_type text not NULL,
-	zip_code int4 not NULL,
+	zip_code text not NULL,
 	foreign key (start_station_id) references station_sf,
 	foreign key (end_station_id) references station_sf	
 );
@@ -88,7 +88,7 @@ CREATE TABLE weather_sf (
     cloud_cover INTEGER,
     events TEXT,
     wind_dir_degrees INTEGER,
-    zip_code INTEGER not null);
+    zip_code text not null);
    
 INSERT INTO weather_sf
 ("date", max_temperature_c, mean_temperature_c, min_temperature_c, max_dew_point_c, mean_dew_point_c, min_dew_point_c, max_humidity, mean_humidity, 
