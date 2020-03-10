@@ -24,12 +24,26 @@ from miary
 -- - jednorzaowe wypożyczenia to 13% wszystkich wypożyczeń, ale są zdecydowanie dłuższe od przejazdów subskrybentów i stanowią ok 42% czasu wszystkich przejazdów.
 -- - jeżeli system poboru opłat byłby skonstruuowany w oparciu o długość wypożyczenia to grupa jednorazowych użytkowników byłaby zdecydowanie bardziej dochodowa od subskrybentów
 
+--Jak często odstawiane są rowery na tą samą stację w zależności od typu użytkownika? i jak długo trwają przejazdy?
+with miary as
+(select subscription_type, case when start_station_id=end_station_id then 'krążowniki' else 'sprinterzy' end as typ,
+ count(t.id) as ilosc_wypo, avg(duration)/60 as sr_dl_przejazdu, sum(duration/60) as czas_total
+from trip_sf t
+group by subscription_type, typ)
 
---Czy godziny szczytu wypożyczeń różnią się w zależności od typu użytkownika?
+select subscription_type, typ, ilosc_wypo, ilosc_wypo/sum(ilosc_wypo) over (partition by subscription_type)::numeric as proc_wypo, 
+       sr_dl_przejazdu, czas_total, czas_total/sum(czas_total) over (partition by subscription_type)::numeric as proc_trwania
+from miary
+
+--WNIOSKI: 
+-- - 13% osób wypożyczjących rowery okazjonalnie rozpoczynają i kończą podróż w tym samym miejscu (późniejsza analiza Hani pokazała, że nie są to dworzec główny)
+-- - osoby wypożyczajace rowery okazjonalnie zdecydowanie częściej oddają rowery na stacji wypożczenia niż abonamenci - robi to tylko 1% abonamentów
+
+--Czy godziny szczytu wypożyczeń różnią się w zależności od typu użytkownika? Analiza średnia per dzień
 with wypo1 as 
-(select date_part('hour', start_date) as godzina, count(id) as ilosc_wypozyczen,
-count(case when subscription_type = 'Subscriber' then id end) as Subscriber,
-count(case when subscription_type = 'Customer' then id end) as Customer
+(select date_part('hour', start_date) as godzina, count(id)/count(distinct EXTRACT(DAY FROM start_date)) as ilosc_wypozyczen,
+count(case when subscription_type = 'Subscriber' then id end)/count(distinct EXTRACT(DAY FROM start_date)) as Subscriber,
+count(case when subscription_type = 'Customer' then id end)/count(distinct EXTRACT(DAY FROM start_date))  as Customer
 from trip_sf
 group by godzina)
 ,
@@ -45,16 +59,16 @@ select *, sum(dsdc_woe) over() iv
 from wypo3;
 
 --WNIOSKI: 
--- - godziny największych ilości wypożyczeń rożnią się w zależności od typu użytkownika
+-- - godziny największych ilości wypożyczeń róźnią się w zależności od typu użytkownika
 -- - szczyt wypożyczeń dla subskrybentów to godziny 8 i 17, co wskazuje na podróże do pracy i powrotne z pracy do domu
 -- - dla wypożyczeń jednorazowych nie ma aż tak zdecydowanych godzin szczytu, ale największa aktywność odbywa się między 11 a 17, czyli w standardowych godzinach pracy
 
 
 --Czy rozkład ilości wypożyczeń w ciagu tygodnia (ponidziałek-niedziela) różni się od typu użytkownika?
 with wypo1 as 
-(select to_char(start_date, 'day') as dzien_tygodnia, count(id) as ilosc_wypozyczen,
-count(case when subscription_type = 'Subscriber' then id end) as Subscriber,
-count(case when subscription_type = 'Customer' then id end) as Customer
+(select to_char(start_date, 'day') as dzien_tygodnia, count(id)/count(distinct EXTRACT(DAY FROM start_date)) as ilosc_wypozyczen,
+count(case when subscription_type = 'Subscriber' then id end)/count(distinct EXTRACT(DAY FROM start_date)) as Subscriber,
+count(case when subscription_type = 'Customer' then id end)/count(distinct EXTRACT(DAY FROM start_date)) as Customer
 from trip_sf
 group by dzien_tygodnia)
 ,
@@ -71,8 +85,8 @@ from wypo3
 order by customer
 
 --WNIOSKI: 
--- - dni z największą ilością wypożyczeń zdecydowanie rożnią się w zależności od typu użytkownika
--- - użytkownicy abonamentowi najczęciej wypożyczają rowery od poniedziałku do piątku, przy czym piątek jest zdecydowanie słabszy od pozostaych dni roboczych,
+-- - dni z największą ilością wypożyczeń zdecydowanie różnią się w zależności od typu użytkownika
+-- - użytkownicy abonamentowi najczęściej wypożyczają rowery od poniedziałku do piątku, przy czym piątek jest zdecydowanie słabszy od pozostałych dni roboczych,
 --   co wskazuje na dojazdy do pracy
 -- - dla wypożyczeń jednorazowych największa koncentracja jest od piątku do niedzieli, wskazuje to na ruch turystyczny
 
@@ -83,14 +97,14 @@ order by customer
 select t1.rzad_kwantylu, dlugosc_cust, dlugosc_sub
 from
 (select
-unnest(percentile_disc(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99, 1]) within group (order by duration/60)) as dlugosc_cust,
-unnest(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99, 1]) as rzad_kwantylu
+unnest(percentile_disc(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]) within group (order by duration/60)) as dlugosc_cust,
+unnest(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]) as rzad_kwantylu
 from trip_sf
 where subscription_type = 'Customer') as t1
 join
 (select
-unnest(percentile_disc(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99, 1]) within group (order by duration/60)) as dlugosc_sub,
-unnest(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99, 1]) as rzad_kwantylu
+unnest(percentile_disc(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]) within group (order by duration/60)) as dlugosc_sub,
+unnest(array[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]) as rzad_kwantylu
 from trip_sf
 where subscription_type = 'Subscriber') as t2 on t1.rzad_kwantylu=t2.rzad_kwantylu;
 
@@ -100,9 +114,19 @@ where subscription_type = 'Subscriber') as t2 on t1.rzad_kwantylu=t2.rzad_kwanty
 --   mogą to być którkie trasy do pracy
 -- - dla wypożyczeń jednorazowych krótkie przejazdy do 14 min to 40%
 
--- Rozkład ilości wypożyczeń w zależnosci od czasu trawnia przejazdu w minutach, w przedziałach co 10 min do godziny
+-- Rozkład ilości wypożyczeń w zależnosci od czasu trawnia przejazdu w minutach, w przedziałach co 5 min do godziny
 with wypo1 as 
-(select case when duration/60<10 then 10 when duration/60<20 then 20 when duration/60<30 then 30 when duration/60<40 then 40 when duration/60<50 then 50 else 60 end as trwanie, 
+(select case when duration/60<5 then 5 
+             when duration/60<10 then 10 
+             when duration/60<15 then 15 
+             when duration/60<20 then 20 
+             when duration/60<25 then 25 
+             when duration/60<30 then 30 
+             when duration/60<35 then 35 
+             when duration/60<40 then 40 
+             when duration/60<45 then 45
+             when duration/60<50 then 50
+             when duration/60<55 then 55 else 60 end as trwanie, 
 count(id) as ilosc_wypozyczen,
 count(case when subscription_type = 'Subscriber' then id end) as Subscriber,
 count(case when subscription_type = 'Customer' then id end) as Customer
@@ -144,7 +168,7 @@ from sezon1;
 --WNIOSKI: 
 -- - wahania sezonowe nie są duże dla subskrybentów - najsłabszy miesiąc w 2014 to luty, nieco lepszy grudzień, w miesiącach 6-10 wypożyczenia na pozimie 9% i wyżej,
 --   w 2015 wygląda to inaczej - marzec jest taki sam jak kwiecień czy czerwiec
--- - za mało lat z pełnymi danymi, żeby wywnioskować o stałych charkaterystykach sezonowych
+-- - za mało lat z pełnymi danymi, żeby wywnioskować o stałych charakterystykach sezonowych
 
 
 --Czy w SF występuje wzmożony sezon trusystyczny?
@@ -157,22 +181,32 @@ from trip_sf t
 where subscription_type = 'Customer'
 group by miesiac)
 
-select miesiac, rok_2013/sum(rok_2013) over () as rok_2013, rok_2014/sum(rok_2014) over () as rok_2014, rok_2015/sum(rok_2015) over () as rok_2015
+select miesiac, rok_2013/sum(rok_2013) over () as rok_2013, rok_2014, rok_2014/sum(rok_2014) over () as rok_2014, rok_2015/sum(rok_2015) over () as rok_2015
 from sezon2;
 
 --WNIOSKI: 
 -- - wahania sezonowe są większe dla okazjonalnych wypożyczeń niż dla abonamentów
 -- - początek i koniec roku są zdecydowanie słabsze niż w okresie wiosny i lata (miesiące 5-8)
 
+with sezon2014 as
+(select date_part('month', start_date) as miesiac,
+       count(case when subscription_type = 'Customer' then t.id end) as Customer, 
+       count(case when subscription_type = 'Subscriber' then t.id end) as Subscriber
+from trip_sf t
+where date_part('year', start_date )='2014'
+group by miesiac)
+,
+sezon2 as
+(select *, Subscriber/sum(Subscriber) over ()::numeric as ds, Customer/sum(Customer) over ()::numeric as dc
+from sezon2014)
+,
+sezon3 as
+(select *, ln(ds/dc) woe, ds - dc dsdc, ln(ds/dc)*(ds-dc) dsdc_woe
+from sezon2)
 
---Jak często odstawiane są rowery na tą samą stację w zależności od typu użytkownika?
-select subscription_type, count(case when start_station_id=end_station_id then t.id end)/count(t.id)::numeric as zgodnosc_stacji
-from trip_sf t join station_sf s on t.start_station_id=s.id 
-group by subscription_type 
+select *, sum(dsdc_woe) over() iv
+from sezon3
 
---WNIOSKI: 
--- - 13% osób wypożyczjących rowery okazjonalnie rozpoczynają i kończą podróż w tym samym miejscu (może miejsce przyjadzu do miasta?)
--- - osoby wypożyczajace rowery okazjonalnie zdecydowanie częściej oddają rowery na stacji wypożczenia niż abonamenci - robi to tylko 1% abonamentów
 
 --Do sprawdzenia czy w pobliżu miejsc, gdzie wypożyczenia i odddania rowerów odbywają się na tej same stacji, są blisko punktów komunikacyjnych?
 --Ranking stacji dokujących wg procentu oddawania na tej samej tacji
