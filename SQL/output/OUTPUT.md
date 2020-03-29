@@ -20,7 +20,9 @@ from krok_1
 select * from krok_2;
 ```
 ## Slajd: "Przykładowe trasy rowerowe obejmujące atrakcje turystyczne".
-+ zapytanie SQL wyznaczające średni czas przejazdu użytkowników między określonymi dwoma stacjami rowerowymi.
++ zapytanie SQL wyznaczające średni czas przejazdu użytkowników między określonymi dwoma stacjami rowerowymi
++ odrzucanych jest 5% najkrótszych i najdłuższych przejazdów
++ pomijane są trasy ropoczynające się i konczące w tym samym punkcie
 
 ```sql
 with kwantyle as
