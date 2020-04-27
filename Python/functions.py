@@ -8,10 +8,10 @@ import seaborn as sns
 class Dataset:
     kolizje = 'Collisions.csv'
     def __str__(self):
-        return 'Nasza apliakcja jest w trakcie budowy - już niedługo finał'
+        return 'Nasza aplikacja z kolizjami jest w trakcie budowy'
 
 def import_data(path=Dataset.kolizje):
-    print('Wyciągnięcie danych chwilę trwa, zrelaksuj się :) ')
+    print('Wyciągnięcie danych chwilę trwa, zrelaksuj się i czekaj na komunikat o zakończeniu')
     # ze względu na wielkość danych ładowanie tylko kolumn używanych do analizy
     data  = pd.read_csv(path, index_col='OBJECTID', 
                         usecols=['OBJECTID', 'X', 'Y', 'SEVERITYDESC','COLLISIONTYPE','PERSONCOUNT', 
@@ -26,6 +26,7 @@ def import_data(path=Dataset.kolizje):
     data = cleaning_data(data)
     data = podzial_daty_na_skladowe(data)
     data = wyciągnięcie_danych_z_opisu(data)
+    print('Gotowe - możesz robić analizy')
 
     return data
     
@@ -50,12 +51,14 @@ def cleaning_data(df):
     # usunięcie przypadków, kiedy liczba rannych jest mniejsza od sumy poważnie rannych + śmiertelnych ??????????
     # sprawdź sobie przed wykonniem czyszczenia:
     # df.groupby(df['DOTKLIWOSC_KOLIZJI'])[['RANNI', 'POWAŻNIE_RANNI', 'ŚMIERTELNIE_RANNI']].sum()
-    df.drop(df[df.RANNI<(df.POWAŻNIE_RANNI+df.ŚMIERTELNIE_RANNI)].index, inplace=True)
+    # df.drop(df[df.RANNI<(df.POWAŻNIE_RANNI+df.ŚMIERTELNIE_RANNI)].index, inplace=True)
 
     # standaryzacja oznaczeń w zmiennych (Y, 1, N, O, NaN) -> zamiana wartości pustych na 0, N na 0, Y na 1
     df.fillna(0, inplace=True)
     df.replace(to_replace = 'N', value = 0, inplace = True)
     df.replace(to_replace = 'Y', value = 1, inplace = True)
+    # ponieważ tesktowe kolumny dalej są tekstem to trzeba je zamienic na int
+    df['POD_WYPLYWEM'] = df['POD_WYPLYWEM'].astype(int)
 
     return df
 
@@ -103,3 +106,18 @@ def wyciągnięcie_danych_z_opisu(df):
     df.drop('OPIS_ZDARZENIA', axis=1, inplace=True)
 
     return df
+
+def outlayer(pokaz, df):
+    if pokaz == 'N':
+        # eliminacja extremnalniw odstajacąej obserwacji
+        # na podstawie: df.groupby(df['TYP_KOLIZJI'])[['RANNI']].max()
+        df = df.drop(df[df.RANNI==78].index)
+    else:
+        df
+
+    return df
+
+def rysuj_boxplot(df, x, y):
+    plt.figure(figsize=(20,10))  # rozszerzenie wykresu na całą stronę
+    sns.boxplot(data=df, x=x, y=y, orient="h")  # rysowanie wykresu skrzykowego
+
