@@ -111,7 +111,8 @@ def outlayer(pokaz, df):
     if pokaz == 'N':
         # eliminacja extremnalniw odstajacąej obserwacji
         # na podstawie: df.groupby(df['TYP_KOLIZJI'])[['RANNI']].max()
-        df = df.drop(df[df.RANNI==78].index)
+        #df = df.drop(df[df.RANNI==78].index)
+        df = df.loc[df['RANNI'] != 78]
     else:
         df
 
@@ -120,4 +121,3 @@ def outlayer(pokaz, df):
 def rysuj_boxplot(df, x, y):
     plt.figure(figsize=(20,10))  # rozszerzenie wykresu na całą stronę
     sns.boxplot(data=df, x=x, y=y, orient="h")  # rysowanie wykresu skrzykowego
-
