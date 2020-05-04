@@ -3,6 +3,7 @@ import numpy as np
 import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
+import ipywidgets as widgets
 #pd.set_option('max_columns', None)
 
 class Dataset:
@@ -107,17 +108,34 @@ def wyciągnięcie_danych_z_opisu(df):
 
     return df
 
-def outlayer(pokaz, df):
-    if pokaz == 'N':
+def checkbox_outlayer(pytanie):
+    checkbox = widgets.Checkbox(value=False, description=pytanie, dsiabled=False, indent=False)
+    return checkbox
+
+def outlayer(wartosc, df):
+    if wartosc == 0:
         # eliminacja extremnalniw odstajacąej obserwacji
         # na podstawie: df.groupby(df['TYP_KOLIZJI'])[['RANNI']].max()
         #df = df.drop(df[df.RANNI==78].index)
         df = df.loc[df['RANNI'] != 78]
+        print('Wybrałeś analizę na danych BEZ obserwacji odstających')
     else:
-        df
-
+        df = df
+        print('Wybrałeś analizę na danych Z obserwacjami odstającymi')
     return df
 
+def wybor_lat(pytanie):
+    lata = widgets.IntRangeSlider(value=[2004, 2020], min=2004, max=2020, step=1, description=pytanie)
+    return lata
+
+def zakres_lat(lata, df):
+    rok_min = min(lata)
+    rok_max = max(lata)
+    df = df.loc[(df['ROK'] > rok_min) & (df['ROK'] <= rok_max)]
+    print(f'Wybrałeś lata pomiędzy {rok_min}, a {rok_max}')
+    return df
+    
 def rysuj_boxplot(df, x, y):
     plt.figure(figsize=(20,10))  # rozszerzenie wykresu na całą stronę
     sns.boxplot(data=df, x=x, y=y, orient="h")  # rysowanie wykresu skrzykowego
+    
