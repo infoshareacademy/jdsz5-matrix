@@ -4,6 +4,9 @@ import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
 import ipywidgets as widgets
+
+from datetime import datetime
+
 #pd.set_option('max_columns', None)
 
 class Dataset:
@@ -73,6 +76,9 @@ def podzial_daty_na_skladowe(df):
     df['DZIEN'] = df['DATA'].dt.day
     df['DZIEN_TYG'] = df['DATA'].dt.day_name()
 
+    df['GODZINA'] = df['DATA'].dt.hour
+    df['data'] = df.apply(lambda row: datetime.strptime(f"{int(row.ROK)}-{int(row.MIESIAC)}-{int(row.DZIEN)}", '%Y-%m-%d'), axis=1)
+
     # usunięcie zbędnej kolumny DATA
     df.drop('DATA', axis=1, inplace=True)
 
@@ -107,6 +113,17 @@ def wyciągnięcie_danych_z_opisu(df):
     df.drop('OPIS_ZDARZENIA', axis=1, inplace=True)
 
     return df
+
+
+def prognozy(df):
+    df_prognozy = df.reset_index()
+    df_prognozy['point'] = list(zip(df_prognozy.SZEROKOSC , df_prognozy.DLUGOSC))
+    df_prognozy['tydzien'] = df_prognozy['data'].dt.strftime('%Y-%U')
+    df_prognozy.drop(df_prognozy[df_prognozy['ROK'] == 2003].index, inplace = True)
+    df_prognozy.drop(df_prognozy[df_prognozy['ROK'] == 2020].index, inplace = True)
+
+    return df_prognozy
+
 
 def checkbox_outlayer(pytanie):
     checkbox = widgets.Checkbox(value=False, description=pytanie, dsiabled=False, indent=False)
