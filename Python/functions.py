@@ -192,7 +192,7 @@ def wybierz_zmienne(lata, wybor, wskaznik, cecha, button):
 def prognozy(df):
     df_prognozy = df.reset_index()
     df_prognozy['point'] = list(zip(df_prognozy.SZEROKOSC , df_prognozy.DLUGOSC))
-    df_prognozy['tydzien'] = df_prognozy['data'].dt.strftime('%Y-%U')
+    df_prognozy['tydzien'] = df['TYDZIEN']
     df_prognozy.drop(df_prognozy[df_prognozy['ROK'] == 2003].index, inplace = True)
     df_prognozy.drop(df_prognozy[df_prognozy['ROK'] == 2020].index, inplace = True)
 
