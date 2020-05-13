@@ -6,6 +6,12 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import seaborn as sns
 import ipywidgets as widgets
+from bokeh.plotting import figure, output_file, show
+from bokeh.models import (CDSView, ColorBar, ColumnDataSource,
+                          CustomJS, CustomJSFilter, 
+                          GeoJSONDataSource, HoverTool,
+                          LinearColorMapper, Slider)
+from bokeh.palettes import brewer
 
 #importy dla map:
 import folium # bokeh wywoluje konflikt z ta biblioteka
@@ -13,9 +19,6 @@ import geopandas as gpd #uwaga ta biblioteka musi byc zainstalowana na nowym sro
 
 import plotly.express as px
 from folium import plugins
-
-
-# In[ ]:
 
 
 def mapa_klastry (df):
