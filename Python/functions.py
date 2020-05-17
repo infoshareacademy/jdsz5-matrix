@@ -10,7 +10,20 @@ from ipywidgets import HBox, VBox
 class Dataset:
     kolizje = 'Collisions.csv'
     def __str__(self):
-        return 'Nasza aplikacja z kolizjami jest w trakcie budowy'
+        opis = """Objaśnienie danych: \n
+        DOTKLIWOSC_KOLIZJI -> skutek kolizji - zmiszczenie mienia, ranii, poważnie ranii lub śmiertelnie ranni \n
+        TYP_KOLIZJI -> piesi, rowerzyści, zaparkowany samochód lub samochód w ruchu wraz z kierunkiem zderzenia \n
+        KIERUNEK_SZCZEGOLY -> kierunek z którego uderzył pojazd powodujący kolizję \n
+        UCZESTNICY -> całkowita liczba osób biorących udział w zdarzeniu \n
+        SPRAWCA, POSZKODOWAY -> kto był sprawcą, a kto poszkodowanym wg typu uczestnika ruchu \n
+        PRZECHODZIEN, PROWERZYSTA, KIEROWCA -> ilość uczestników zdarzenia wg typu uczestnika ruchu \n
+        RANNI, POWAZNIE_RANNI, SMIERTELNIE_RANNI -> ilość poszkodowanych w zdarzeniu wg stopnia obrażeń \n
+        NIEUWAGA -> kolizje spowodwane rozkojarzeniem kierującego \n
+        POD_WYPLYWEM -> kolizje spowodawane przez osobę pod wplywem środków odurzających \n
+        PRZEKORCZENIE_PREDKOSCI -> zdarzenia wnikające ze zbyt brawurowej jazdy \n
+        PIERWSZENSTO_PIESZEGO -> potrącenia pieszych, gdy mieli oni pierszewństwo przejścia \n
+        POGODA, WARUNKI_DROGOWE, OSWIETLENIE -> warunki pogodowe, drogowe w jakich zdarzyła się kolizja"""
+        return opis
 
 def import_data(path=Dataset.kolizje):
     print('Wyciągnięcie i dostosowanie danych chwilę trwa, zrelaksuj się i czekaj na komunikat o zakończeniu')
