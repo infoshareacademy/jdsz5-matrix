@@ -7,6 +7,11 @@ import ipywidgets as widgets
 import warnings
 from ipywidgets import HBox, VBox
 
+import math                                        
+import random                                      
+from scipy.stats import ttest_ind                  
+from datetime import datetime                      
+
 class Dataset:
     kolizje = 'Collisions.csv'
     def __str__(self):
@@ -84,6 +89,8 @@ def podzial_daty_na_skladowe(df):
     df['GODZINA'] = df['DATA'].dt.hour
     df['TYDZIEN'] = df['DATA'].dt.strftime('%Y-%U')
     df['DATA'] = df['DATA'].dt.date
+
+    df['data'] = df.apply(lambda row: datetime.strptime(f"{int(row.ROK)}-{int(row.MIESIAC)}-{int(row.DZIEN)}", '%Y-%m-%d'), axis=1)
 
     return df
 
@@ -199,13 +206,14 @@ def wybierz_zmienne(lata, wybor, wskaznik, cecha, button):
     return box
     
 
-def prognozy(df):
+def prognozy(df):                                                                                                                   
     df_prognozy = df.reset_index()
     df_prognozy['point'] = list(zip(df_prognozy.SZEROKOSC , df_prognozy.DLUGOSC))
-    df_prognozy['tydzien'] = df['TYDZIEN']
+    df_prognozy['tydzien'] = df_prognozy['data'].dt.strftime('%Y-%U')
     df_prognozy.drop(df_prognozy[df_prognozy['ROK'] == 2003].index, inplace = True)
     df_prognozy.drop(df_prognozy[df_prognozy['ROK'] == 2020].index, inplace = True)
 
     return df_prognozy
+
 
     
