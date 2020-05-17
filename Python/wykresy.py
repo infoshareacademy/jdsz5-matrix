@@ -30,7 +30,7 @@ def kolizje_miesiac(df_prognozy):
     fig, ax = plt.subplots(figsize=(15,6))
 
     df_prognozy.set_index('data').resample('M').size().plot(label='Ilość kolizji na miesiąc', color='grey', ax=ax)
-    df_prognozy.set_index('data').resample('M').size().rolling(window=12).mean().plot(color='blue', linewidth=5, label='Średnia roczna ilość kolizji', ax=ax)
+    df_prognozy.set_index('data').resample('M').size().rolling(window=12).mean().plot(color='rgb(58, 155, 150)', linewidth=5, label='Średnia roczna ilość kolizji', ax=ax)
 
     ax.set_title('Ilość kolizji na miesiąc', fontsize=14, fontweight='bold')
     ax.set(ylabel='Ilość kolizji\n', xlabel='')
@@ -258,19 +258,7 @@ def warunki_drogowe (df):
     p.line(group4['MIESIAC'],group4['RANNI'], legend='zaśnieżona', line_width = 4, color = '#57e8e0')
     p.line(group5['MIESIAC'],group5['RANNI'], legend='olej na drodze', line_width = 4, color = '#7db9b6')
     p.line(group6['MIESIAC'],group6['RANNI'], legend='błoto, piasek', line_width = 4, color = '#a87460')
-    p.line(group7['MIESIAC'],group6['RANNI'], legend='woda stojąca', line_width = 4, color = '#e8df85')
-
-    # Pokaż wykres
-    show(p)
-
-    # Dodaj linie do wykresu
-    p.line(group1['MIESIAC'],group1['RANNI'], legend='sucha nawierzchnia', line_width = 4, color ='#8c1c6c')
-    p.line(group2['MIESIAC'],group2['RANNI'], legend='mokra nawierzchnia', line_width = 4, color = 'blue')
-    p.line(group3['MIESIAC'],group3['RANNI'], legend='oblodzenie', line_width = 4, color = 'green')
-    p.line(group4['MIESIAC'],group4['RANNI'], legend='zaśnieżona', line_width = 4, color = 'grey')
-    p.line(group5['MIESIAC'],group5['RANNI'], legend='olej na drodze', line_width = 4, color = 'orange')
-    p.line(group6['MIESIAC'],group6['RANNI'], legend='błoto, piasek', line_width = 4, color = 'yellow')
-    p.line(group7['MIESIAC'],group6['RANNI'], legend='woda stojąca', line_width = 4, color = 'black')
+    p.line(group7['MIESIAC'],group7['RANNI'], legend='woda stojąca', line_width = 4, color = '#e8df85')
 
     # Pokaż wykres
     show(p)
