@@ -125,14 +125,11 @@ def checkbox_outlayer(pytanie):
 
 def outlayer(wartosc, df):
     if wartosc == 0:
-        # eliminacja extremnalniw odstajacąej obserwacji
-        # na podstawie: df.groupby(df['TYP_KOLIZJI'])[['RANNI']].max()
-        #df = df.drop(df[df.RANNI==78].index)
-        df = df.loc[df['RANNI'] != 78]
-        print('Analiza BEZ obserwacji odstających')
+        df = df.drop(df[df.RANNI>8].index)
+        print('Katastrofy drogowe wykluczone')
     else:
         df = df
-        print('Analiza Z obserwacjami odstającymi')
+        print('Analiza z katastrofami drogowymi')
     return df
 
 
@@ -153,7 +150,7 @@ def widgety(df):
     global df_box, lata, wybor, wskaznik, cecha, button
     df_box = df
     lata = wybor_lat(pytanie='Zakres lat')
-    wybor = checkbox_outlayer(pytanie='Uwzględnić obserwacje odstające?') 
+    wybor = checkbox_outlayer(pytanie='Uwzględnić katastrofy drogowe (ranni>8)?') 
     wskaznik = widgets.Dropdown(
            options=['UCZESTNICY','PRZECHODZIEN', 'PROWERZYSTA', 'KIEROWCA',
                     'RANNI', 'POWAZNIE_RANNI', 'SMIERTELNIE_RANNI'],
