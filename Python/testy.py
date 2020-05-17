@@ -35,6 +35,7 @@ def dwie_srednie(dane, cecha, grupa1, grupa2, wartosc, alpha=0.05, obszar='oba')
     '''
     a = dane[dane[cecha] == grupa1][wartosc].array
     b = dane[dane[cecha] == grupa2][wartosc].array
+    if len(a) * len(b) == 0: return print('Test nie zadziałał, gdyż błędnie wprowadzono argumenty funkcji')
     ma = np.mean(a)
     mb = np.mean(b)
     na = len(a)
