@@ -1,4 +1,4 @@
-.ipynb_checkpoints/
+*.ipynb_checkpoints/
 __pycache__/
 Python/Collisions.csv
 Python/districts_seattle.dbf
@@ -8,3 +8,4 @@ Python/districts_seattle.shp
 Python/districts_seattle.shx
 Python/dzielnice.csv
 Python/apka_wypadki.png
+ML/rideshare_kaggle.csv
