@@ -34,8 +34,8 @@ def formularz():
     display(box)
     
 def click_button_moj(button_moj):
-    #clear_output()  # wyczyszczenie pamiecie - czysci również przycisk
-    print(f'Miesiąc: {clik_miesiac.value}, Property type: {clik_property.value}, Room type: {clik_room.value}, \n \
-    Guest included: {clik_guest.value}, Extra people: {clik_extra_people.value}, Cleanig fee: {clik_cleaning.value}, \n \
-    Superhost: {clik_superhost.value}')
+    print('Na razie brak modelu')
+    #print(f'Miesiąc: {clik_miesiac.value}, Property type: {clik_property.value}, Room type: {clik_room.value}, \n \
+    #Guest included: {clik_guest.value}, Extra people: {clik_extra_people.value}, Cleanig fee: {clik_cleaning.value}, \n \
+    #Superhost: {clik_superhost.value}')
     
