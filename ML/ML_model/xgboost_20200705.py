@@ -1,7 +1,7 @@
 import sklearn
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_validate, train_test_split, GridSearchCV
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -18,7 +18,7 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings("ignore")
 
-df = pd.read_csv('data.csv')
+df = pd.read_csv('../data/data_minus_outliers_20200708_min.csv')
 y = df.Price.values
 # bez nomalizacji
 #X = df.drop('Price', axis=1).values
@@ -52,29 +52,29 @@ tuned_parameters = {
     #"logit": {'C': [0.1, 1.0, 5.0]},
     #"decision_tree": {'max_depth': [3, 4, 5, 6, 7, 8, 9 ,10]},
     #"random_forest": {'n_estimators': [10, 30, 60, 90, 120]},
-    "xgboost": {'n_estimators': [325], #'n_estimators': range(50, 400, 50) a potem zawężałam
-                'booster': ['gbtree'], #'booster': ['gbtree', 'gblinear'],
+    "xgboost": {'n_estimators': [245], #range(250, 325, 25), #[325], range(50, 400, 50)
+                'booster': ['gbtree'], #'['gbtree', 'gblinear'],
                 #default=6, range: [0,∞]
-                'max_depth': [10], #9!'max_depth': [3, 4, 5, 6, 7, 8, 9 ,10]
+                'max_depth': [10], # [3, 4, 5, 6, 7, 8, 9 ,10],
                 #default=0.3, range: [0,1]
-                'eta': [0.2], #'eta': [0.1, 0.2, 0.3]
-                'learning_rate': [0.2], #'learning_rate': [0.05, 0.1, 0.2, 0.3]
+                'eta': [0.1], # [0.1, 0.2, 0.3]
+                'learning_rate': [0.2], #'[0.05, 0.1, 0.2, 0.3]
                 #default=1, range: [0,∞]
-                'min_child_weight': [3], #'min_child_weight': [1, 2, 3]
+                'min_child_weight': [3], #[1, 2, 3]
                 #default=0, range: [0,∞]
-                'gamma': [0.9], #'gamma': [0, 0.5, 1]
+                'gamma': [1],#[0.9], # [0, 0.5, 1]
                 #default=1, range of (0, 1]
                 'colsample_bytree': [0.9], #'colsample_bytree': [1, 0.7, 0.3], potem [0.9, 1]
-                'colsample_bylevel': [1], #: [1, 0.7, 0.3],[1, 0.9, 0.8]
+                'colsample_bylevel': [0.9], #: [1, 0.7, 0.3],[1, 0.9, 0.8]
                 'colsample_bynode': [1], #: [1, 0.7, 0.3],[1, 0.9, 0.8]
                 #default=1, range: (0,1]
-                'subsample': [1], #'subsample': [1, 0.6, 0.4] teaz to jest do sprawdzenia [0.9, 1]
+                'subsample': [1], # [1, 0.6, 0.4] teaz to jest do sprawdzenia [0.9, 1]
                 #default=1
                 'reg_lambda': [1], #[0.1, 1, 10, 100]
                 #default=0
                 'reg_alpha':[100], #[1e-5, 1e-2, 0.1, 1, 100]
                 #default=0, range: [0,∞]
-                'max_delta_step': [0], #max_delta_step':[0, 5, 10]}
+                'max_delta_step': [0], # [0, 5, 10]}
                 #tree_method string [default= auto]
                 'tree_method': ['auto']}, # ['auto', 'exact', 'approx', 'hist', 'gpu_hist'] 
     #"bayes": {'priors': [(0.3, 0.3, 0.4), (0.5, 0.25, 0.25)]},
@@ -93,16 +93,17 @@ for key in regrModels:
     testScore = clf.score(X_test, Y_test)
     preds = clf.predict(X_test)
     rmse = np.sqrt(mean_squared_error(Y_test, preds))
+    mae = mean_absolute_error(Y_test, preds)
     time_string = datetime.now().strftime('%Y%m%d_%H%M%S')
     tmp = pd.DataFrame({'Datetime': time_string, 'Algorithm': key, 'Best_score': clf.best_score_, \
-          'Best_params': [clf.best_params_], 'R2': testScore, 'RMSE': rmse})
+          'Best_params': [clf.best_params_], 'R2': testScore, 'RMSE': rmse, 'MAE': mae})
     results_csv = results_csv.append(tmp)
     # zapis do pliku dla jednego modelu
-    results_csv.to_csv("xgboost_results.csv", index=False, sep=';', header=False, mode='a')
+    results_csv.to_csv("../results/xgboost_results.csv", index=False, sep=';', header=False, mode='a')
     # zapis do pliku dla próby z wszystkimi modelami
     #results_csv.to_csv("tunning_results.csv", index=False, sep=';', header=False, mode='a')
     print(f'Datetime: {time_string}, Algorithm: {key}, Best_score: {clf.best_score_}, \
-          Best_params: {clf.best_params_}, R2: {testScore}, RMSE: {rmse}')
+          Best_params: {clf.best_params_}, R2: {testScore}, RMSE: {rmse}, MAE: {mae}')
 
 ##############################################################################
 #kawałek kodu dzięki któremu będzie łatwo porównywać wyniki najlepszych tuningów
