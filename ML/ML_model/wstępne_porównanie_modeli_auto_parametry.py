@@ -18,7 +18,7 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings("ignore")
 
-df = pd.read_csv('data.csv')
+df = pd.read_csv('../data/data_minus_outliers_20200708_min.csv')
 y = df.Price.values
 # bez nomalizacji
 #X = df.drop('Price', axis=1).values
@@ -115,7 +115,7 @@ def TrainAndPrintResults(modelList, dataset, figsize=(15, 20)):
     
     # present results on charts
     printResultsCharts(results, figsize=figsize)
-    plt.savefig(f'porownanie_modeli_R2_i_czas.pdf')
+    plt.savefig(f'../results/porownanie_modeli_R2_i_czas.png')
 
 regrRealResults = TrainAndPrintResults(regrModels, regrSplit) 
 # jeżeli chcesz zbaczyć więćej wynikół to włącz soie je w regrModels
@@ -141,6 +141,6 @@ def TestAndPrintResults(modelList, dataset, figsize=(15, 5)):
         results["testScore"].append(testScore)
         
     printResultsCharts(results, figsize=figsize)
-    plt.savefig(f'porownanie_modeli_test_score.pdf')
+    plt.savefig(f'../results/porownanie_modeli_test_score.png')
     
 TestAndPrintResults(regrModels, regrSplit)
