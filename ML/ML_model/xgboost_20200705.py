@@ -52,7 +52,7 @@ tuned_parameters = {
     #"logit": {'C': [0.1, 1.0, 5.0]},
     #"decision_tree": {'max_depth': [3, 4, 5, 6, 7, 8, 9 ,10]},
     #"random_forest": {'n_estimators': [10, 30, 60, 90, 120]},
-    "xgboost": {'n_estimators': [245], #range(250, 325, 25), #[325], range(50, 400, 50)
+    "xgboost": {'n_estimators': [243], #range(250, 325, 25), #[325], range(50, 400, 50)
                 'booster': ['gbtree'], #'['gbtree', 'gblinear'],
                 #default=6, range: [0,∞]
                 'max_depth': [10], # [3, 4, 5, 6, 7, 8, 9 ,10],
