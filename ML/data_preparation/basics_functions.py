@@ -1,3 +1,16 @@
+import pandas as pd
+import numpy as np
+import warnings
+import matplotlib.pyplot as plt
+import folium
+from folium import plugins
+import plotly.express as px
+import seaborn as sns
+import geopandas as gpd
+from sklearn import cluster
+from sklearn.preprocessing import scale
+from sklearn.cluster import KMeans
+
 #### Podstawowa wiedza o zbiorze danych
 
 
@@ -331,4 +344,65 @@ def klastry_dzielnice (df_b):
     k5sizes = zdb.groupby('k5acls').size()
     _ = k5sizes.plot(kind='bar')
 
-    
+def rozklad_zmiennych (df_b):
+    import matplotlib.pyplot as plt
+
+    abb = gpd.read_file('districts.geojson') 
+    aves = df_b.groupby('neighbourhoodcleansed')[varis_gen].mean()
+    db = abb[['geometry', 'neighbourhoodcleansed']].join(aves, on='neighbourhoodcleansed')\
+                                             .dropna()
+
+    lokal = ['bathrooms','bedrooms','beds','roomtypeEntirehomeapt','roomtypePrivateroom','roomtypeSharedroom']             
+    recenzje = ['numberofreviews','reviewscoresrating','reviewscoresaccuracy','reviewscorescleanliness','reviewscorescheckin','reviewscorescommunication','reviewscoreslocation','reviewscoresvalue']            
+    cena = ['Price','demand','hostexperience','securitydeposit','cleaningfee']        
+    typ = ['propertytypeApartment','propertytypeBedBreakfast','propertytypeBoat','propertytypeBungalow','propertytypeCabin','propertytypeCamperRV','propertytypeChalet','propertytypeCondominium','propertytypeDorm','propertytypeHouse','propertytypeLoft','propertytypeTent','propertytypeTownhouse','propertytypeTreehouse','propertytypeYurt']
+
+    print ('Wykresy rozkład przestrzenny zmiennych')
+
+    print ('Cena & obłożenie')
+
+    f, axs = plt.subplots(nrows=1, ncols=6, figsize=(22, 5))
+    axs = axs.flatten()
+    for i, col in enumerate(cena):
+        ax = axs[i]
+        db.plot(column=col, axes=ax, scheme='Quantiles', linewidth=0, colormap='Reds')
+        ax.set_axis_off()
+        ax.set_title(col)
+    plt.show()
+    plt.savefig('price_demand_maps.jpg')
+
+    print ('Recenzje')
+
+    f, axs = plt.subplots(nrows=2, ncols=6, figsize=(22, 10))
+    axs = axs.flatten()
+    for i, col in enumerate(recenzje):
+        ax = axs[i]
+        db.plot(column=col, axes=ax, scheme='Quantiles', linewidth=0, colormap='Reds')
+        ax.set_axis_off()
+        ax.set_title(col)
+    plt.show()
+    plt.savefig('reviews_maps.jpg')
+
+    print ('Typ lokali')
+
+    f, axs = plt.subplots(nrows=3, ncols=6, figsize=(22, 10))
+    axs = axs.flatten()
+    for i, col in enumerate(typ):
+        ax = axs[i]
+        db.plot(column=col, axes=ax, scheme='Quantiles', linewidth=0, colormap='Reds')
+        ax.set_axis_off()
+        ax.set_title(col)
+    plt.show()
+    plt.savefig('types_maps.jpg')
+
+    print ('Charakterystyka lokali')
+
+    f, axs = plt.subplots(nrows=1, ncols=6, figsize=(22, 5))
+    axs = axs.flatten()
+    for i, col in enumerate(lokal):
+        ax = axs[i]
+        db.plot(column=col, axes=ax, scheme='Quantiles', linewidth=0, colormap='Reds')
+        ax.set_axis_off()
+        ax.set_title(col)
+    plt.show()
+    plt.savefig('specifics_maps.jpg')
