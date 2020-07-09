@@ -74,7 +74,7 @@ tuned_parameters = {
                 #default=0
                 'reg_alpha':[100], #[1e-5, 1e-2, 0.1, 1, 100]
                 #default=0, range: [0,∞]
-                'max_delta_step': [0], # [0, 5, 10]}
+                'max_delta_step': [0], # [0, 5, 10]
                 #tree_method string [default= auto]
                 'tree_method': ['auto']}, # ['auto', 'exact', 'approx', 'hist', 'gpu_hist'] 
     #"bayes": {'priors': [(0.3, 0.3, 0.4), (0.5, 0.25, 0.25)]},
