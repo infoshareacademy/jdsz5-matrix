@@ -45,7 +45,7 @@ def xgboost_model():
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=testSize, random_state=randomState)
 
     xg_model = xgb.XGBRegressor(objective="reg:squarederror",
-                                n_estimators=245,
+                                n_estimators=243,
                                 booster='gbtree',
                                 max_depth= 10,
                                 eta= 0.1,
@@ -57,7 +57,7 @@ def xgboost_model():
                                 colsample_bynode = 1,
                                 subsample= 1,
                                 reg_lambda=1,
-                                reg_alpha=100,#alpha = 10
+                                reg_alpha=100,
                                 max_delta_step=0,
                                 tree_method='auto')
     model = xg_model.fit(X_train, Y_train)
@@ -67,7 +67,6 @@ def formularz():
     # ostateczna ramka
     box_inside_left = widgets.HBox([clik_zip_code, clik_property])
     left_box = widgets.VBox([clik_model, box_inside_left, clik_room])
-    #left_box = widgets.VBox([clik_zip_code, clik_month, clik_room, clik_property])
     right_box = widgets.VBox([clik_month, clik_nights, clik_cleaning, clik_accommodates, clik_beds, clik_bedrooms, clik_bathrooms, clik_guests, clik_extra_people])
     box = widgets.HBox([left_box, right_box])
     #pokaż
@@ -126,19 +125,19 @@ def xgboost_calosc(df_preds):
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=testSize, random_state=randomState)
 
     xg_model = xgb.XGBRegressor(objective="reg:squarederror",
-                                n_estimators=325,
+                                n_estimators=243,
                                 booster='gbtree',
                                 max_depth= 10,
-                                eta= 0.2,
+                                eta= 0.1,
                                 learning_rate= 0.2,
                                 min_child_weight= 3,
-                                gamma=0.9,
+                                gamma=1,
                                 colsample_bytree = 0.9, 
-                                colsample_bylevel = 1,
+                                colsample_bylevel = 0.9,
                                 colsample_bynode = 1,
                                 subsample= 1,
                                 reg_lambda=1,
-                                reg_alpha=100,#alpha = 10
+                                reg_alpha=100,
                                 max_delta_step=0,
                                 tree_method='auto')
     xg = xg_model.fit(X_train, Y_train)
