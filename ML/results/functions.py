@@ -25,7 +25,7 @@ clik_property = widgets.Select(description='Property type:', options=property, s
 clik_room = widgets.ToggleButtons(description='Room type:', options=room)
 clik_guests = widgets.IntSlider(description='Guest included', value=0, min=0, max=10, style=style) # w danych jest max 7
 clik_extra_people = widgets.Checkbox(value=False, description='Extra people', disabled=False, style=style)
-clik_cleaning = widgets.IntSlider(description='Cleanig fee', value=50, min=1, max=200, style=style)
+clik_cleaning = widgets.IntSlider(description='Cleanig fee', value=50, min=0, max=200, style=style)
 clik_zip_code = widgets.Select(description='Zip code:', options=zip_code, disabled=False, rows=13, layout=Layout(width='auto'))
 clik_bedrooms = widgets.IntSlider(description='Bedrooms:', value=1, min=1, max=5, style=style) # w danych jest max 4
 clik_beds = widgets.IntSlider(description='Beds:', value=1, min=1, max=10, style=style) # w danych jest max 7 łóżek
@@ -36,7 +36,7 @@ clik_nights = widgets.IntSlider(description='Minimum nights', value=1, min=1, ma
 clik_model = widgets.ToggleButtons(description='ML MODEL:', options=['xgboost', 'random_forest'])
 
 def xgboost_model():
-    df = pd.read_csv('../data/data_minus_outliers_20200708_min.csv')
+    df = pd.read_csv('../data/data_20200709.csv')
     y = df.Price.values
     X = df.drop('Price', axis=1)
     X = pd.DataFrame(StandardScaler().fit_transform(X), columns = X.columns)
@@ -45,7 +45,7 @@ def xgboost_model():
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=testSize, random_state=randomState)
 
     xg_model = xgb.XGBRegressor(objective="reg:squarederror",
-                                n_estimators=243,
+                                n_estimators=350,
                                 booster='gbtree',
                                 max_depth= 10,
                                 eta= 0.1,
@@ -57,7 +57,7 @@ def xgboost_model():
                                 colsample_bynode = 1,
                                 subsample= 1,
                                 reg_lambda=1,
-                                reg_alpha=100,
+                                reg_alpha=50,
                                 max_delta_step=0,
                                 tree_method='auto')
     model = xg_model.fit(X_train, Y_train)
@@ -116,7 +116,7 @@ def xgboost_check(df_preds, model):
 
 
 def xgboost_calosc(df_preds):
-    df = pd.read_csv('../data/data_minus_outliers_20200708_min.csv')
+    df = pd.read_csv('../data/data_20200709.csv')
     y = df.Price.values
     X = df.drop('Price', axis=1)
     X = pd.DataFrame(StandardScaler().fit_transform(X), columns = X.columns)
@@ -125,7 +125,7 @@ def xgboost_calosc(df_preds):
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=testSize, random_state=randomState)
 
     xg_model = xgb.XGBRegressor(objective="reg:squarederror",
-                                n_estimators=243,
+                                n_estimators=350,
                                 booster='gbtree',
                                 max_depth= 10,
                                 eta= 0.1,
@@ -137,7 +137,7 @@ def xgboost_calosc(df_preds):
                                 colsample_bynode = 1,
                                 subsample= 1,
                                 reg_lambda=1,
-                                reg_alpha=100,
+                                reg_alpha=50,
                                 max_delta_step=0,
                                 tree_method='auto')
     xg = xg_model.fit(X_train, Y_train)
