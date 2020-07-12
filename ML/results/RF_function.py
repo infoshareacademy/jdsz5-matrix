@@ -9,7 +9,7 @@ from csv import DictWriter
 import os.path
 import matplotlib.pyplot as plt
 
-def RandomForest_model():
+def RandomForest_model(max_depth,n_estimators):
 
     df = pd.read_csv('../data/data_ML.csv')
       
@@ -23,8 +23,8 @@ def RandomForest_model():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
       
     model = RandomForestRegressor(
-        max_depth = 30,
-        n_estimators = 185,
+        max_depth = max_depth,
+        n_estimators = n_estimators,
         random_state = False,
         verbose = False
         )
