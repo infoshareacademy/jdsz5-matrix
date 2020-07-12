@@ -1,18 +1,16 @@
-Temat: Prognoza oceny jakości usług AirBnB
+Temat: Prognoza ceny usług AirBnB
 
 Zespół: Joanna Kwiatkowska, Hanna Obracht-Prondzyńska, Wojciech Bonna, Maciej Gadaj
 
 Przyjęte założenia:
-Chcemy dostarczyć właścicielom wynajmujących swoje mieszkania za pośrednictwem portalu AirBnB wskazówek, na co szczególnie powinni zwrócić uwagę, aby utrzymać lub poprawić oraz ocenę pobytu oraz zwiększyć zainteresowanie krótkim najmem korzystających z usług AirBnB. 
-Dodatkowo, w wymiarze poznawczym, interesuje nas przewidywanie cen oraz rentowności z inwestowania w usługi krótkiego najmu. Np. jakiego typu mieszkania cieszą się największym zainteresowaniem.
+Chcemy dostarczyć właścicielom informacje jakie są prognozowane ceny ich lokali, zatem ile będą w stanie na nich zarobić. Z drugiej zaś strony chcemy pokazać użytkownikom ofert AirBnB, czy nie przepłacają za usługę, którą wybrali.
 
 Baza danych:
 https://www.kaggle.com/airbnb/seattle?select=listings.csv
 
 Cele analizy:
-Prognozowanie popytu na mieszkania pod krótki najem w zależności od obecnych opinii użytkowników, typów mieszkań, ich lokalizacji itp. (cel główny - do prezentacji)
-Prognozowanie cen wynajmu krótkiego w zależności od czynników, takich jak ocena użytkowników, warunki lokalowe, lokalizacja.
-Określenie jakiego typu mieszkania cieszą się największą popularnością i przynoszą największy zysk.
+Prognozowanie ceny na mieszkania pod krótki najem w zależności od obecnych opinii użytkowników, typów mieszkań, warunków lokalowych i ich lokalizacji itp. 
+Określenie jakiego typu mieszkania i w jakiej lokalizacji cieszą się największą popularnością i przynoszą największy zysk.
 
 Zadania do wykonania:
 (lista może ulec zmianie w zależności od odkrytych informacji w trakcie eksploracji danych)
@@ -38,12 +36,11 @@ usunięcie outlierów (czym są?)
 
 Model (podstawowe zadania i założenia):
 Testowanie modeli, w tym:
-Regresja liniowa, logistyczna i wielomianowa (Asia i in.)
-Drzewa i lasy (Maciek)
-Naive Bayes (Wojtek)
-KNN i SVM (Hania)
-Xgboost (Asia)
-Określenie accuracy 
+Regresja liniowa, logistyczna i wielomianowa
+Drzewa i lasy
+Naive Bayes
+KNN i SVM
+Xgboost
 
 Porównanie modeli:
 Zaprojektowanie systemu do optymalizacji hiper parametrów (zrobienie pipeline)
@@ -53,5 +50,3 @@ Dopracowanie najlepszych dwóch modeli
 Prezentacja wyników:
 Przedstawienie, który z modeli jest najdokładniejszy
 Stworzenie widgecików pozwalających na wybór uwarunkowań, dla których wyświetlą się nasze prognozowane wartości.
-Zarządzanie i uporządkowanie plików na gicie
-Uporządkowanie prezentacji w jupyterze
